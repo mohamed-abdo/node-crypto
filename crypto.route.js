@@ -12,6 +12,12 @@ const {
   sign,
   isValidSignature,
 } = require("./cryptp.service");
+
+const {
+  encrypt: pk1_enctypt,
+  decrypt: pk1_decrypt,
+} = require("./crypt.pkcs1.service");
+
 const hashSecret = "my-secret";
 const key = randomBytes(32);
 const iv = randomBytes(16);
@@ -54,6 +60,19 @@ cryptoRoute.get("/:message/asym-dec", (req, res) => {
   let input = req.params.message;
   let encrypted = encryptAsym(input);
   let decrypted = decryptAsym(encrypted);
+  res.send({ decrypted: decrypted });
+});
+
+cryptoRoute.get("/:message/asym-enc-v1", (req, res) => {
+  let input = req.params.message;
+  let encrypted = pk1_enctypt(input);
+  res.send({ encrypt: encrypted });
+});
+
+cryptoRoute.get("/:message/asym-dec-v1", (req, res) => {
+  let input = req.params.message;
+  let encrypted = pk1_enctypt(input);
+  let decrypted = pk1_decrypt(encrypted);
   res.send({ decrypted: decrypted });
 });
 
